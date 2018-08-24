@@ -7,10 +7,10 @@ public class Board extends JPanel implements ActionListener {
 
     private int height, width;
     private int numMines;
-    private Tile [][] grid;
+    private Tile[][] grid;
 
     public Board(int x, int y){
-        GridLayout layout= new GridLayout(x, y, 0, 0);
+        GridLayout layout= new GridLayout(x, y, 1, 1);
         setLayout(layout);
         this.width = x;
         this.height = y;

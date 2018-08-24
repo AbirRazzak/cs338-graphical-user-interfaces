@@ -6,7 +6,7 @@ public class Game extends JFrame {
         super("Minesweeper Reborn");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        add(new Board(4, 4));
+        add(new Board(15, 15));
 
         setPreferredSize(new Dimension(4*100, 4*100));
         setResizable(false);
