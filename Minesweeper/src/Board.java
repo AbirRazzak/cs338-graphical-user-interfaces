@@ -17,12 +17,12 @@ public class Board extends JPanel implements ActionListener {
         this.minesCount = mines;
 
         this.grid = new Tile[this.width][this.height];
-        for(int i = 0; i < this.width; i++){
-            for(int j = 0; j < this.height; j++){
-                Tile t = new Tile(i, j);
+        for(int i = 0; i < this.height; i++){
+            for(int j = 0; j < this.width; j++){
+                Tile t = new Tile(j, i);
                 t.addActionListener(this);
-                this.grid[i][j] = t;
-                add(this.grid[i][j]);
+                this.grid[j][i] = t;
+                add(this.grid[j][i]);
             }
         }
 
@@ -144,7 +144,7 @@ public class Board extends JPanel implements ActionListener {
         switch (val){
             case 0:
                 // Empty/blank tile
-                t.setText("E");
+                t.setText(".");
                 break;
             case -1:
                 // Bomb tile
@@ -155,11 +155,132 @@ public class Board extends JPanel implements ActionListener {
                 t.setText(Integer.toString(val));
                 break;
         }
+
+        t.revealTile();
+    }
+
+    /**
+     * RevealAdjacentNumbers - Reveals all number tiles adjacent to the tile given
+     * @param t - a empty tile that has been called with RevealTile()
+     */
+    private void RevealAdjacentNumbers(Tile t){
+        Dimension tileCoordinates = t.getCoordinates();
+        int x = tileCoordinates.width;
+        int y = tileCoordinates.height;
+        Tile n;
+
+        // Reveals number tiles to the left of empty tile
+        if(x > 0){
+            if(y > 0){
+                n = this.grid[x-1][y-1];
+                if(!n.isRevealed() && n.isNumber()) DecodeTile(n);
+            }
+
+            n = this.grid[x-1][y];
+            if(!n.isRevealed() && n.isNumber()) DecodeTile(n);
+
+            if(y < this.height - 1){
+                n = this.grid[x-1][y+1];
+                if(!n.isRevealed() && n.isNumber()) DecodeTile(n);
+            }
+        }
+
+        // Reveals number tiles to the right of empty tile
+        if(x < this.width - 1){
+            if(y > 0){
+                n = this.grid[x+1][y-1];
+                if(!n.isRevealed() && n.isNumber()) DecodeTile(n);
+            }
+
+            n = this.grid[x+1][y];
+            if(!n.isRevealed() && n.isNumber()) DecodeTile(n);
+
+            if(y < this.height - 1){
+                n = this.grid[x+1][y+1];
+                if(!n.isRevealed() && n.isNumber()) DecodeTile(n);
+            }
+        }
+
+        // Reveals number tiles above and below empty tile
+        if(y > 0){
+            n = this.grid[x][y-1];
+            if(!n.isRevealed() && n.isNumber()) DecodeTile(n);
+        }
+        if(y < this.height - 1){
+            n = this.grid[x][y+1];
+            if(!n.isRevealed() && n.isNumber()) DecodeTile(n);
+        }
+    }
+
+    /**
+     * RevealTile - Reveals a tile, and all adjacent empty tiles
+     * @param t - a number or empty tile, that the user has clicked on
+     */
+    private void RevealTile(Tile t){
+        DecodeTile(t);
+        if(t.isEmpty()) RevealAdjacentNumbers(t);
+
+        Dimension tileCoordinates = t.getCoordinates();
+        int x = tileCoordinates.width;
+        int y = tileCoordinates.height;
+        Tile e;
+
+        // Reveals adjacent empty tiles to the left of tile
+        if(x > 0){
+            if(y > 0){
+                e = this.grid[x-1][y-1];
+                if(e.isEmpty() && !e.isRevealed()){
+                    System.out.println("Empty adjacent tile at: ("+e.getCoordinates().width+", "+e.getCoordinates().height+")");
+                    System.out.println("Grid["+(x-1)+"]["+(y-1)+"]");
+                    RevealTile(e);
+                }
+            }
+
+            e = this.grid[x-1][y];
+            if(e.isEmpty()&& !e.isRevealed()) RevealTile(e);
+
+            if(y < this.height - 1){
+                e = this.grid[x-1][y+1];
+                if(e.isEmpty()&& !e.isRevealed()) RevealTile(e);
+            }
+        }
+
+        // Reveals adjacent empty tiles to the right of tile
+        if(x < this.width - 1){
+            if(y > 0){
+                e = this.grid[x+1][y-1];
+                if(e.isEmpty()&& !e.isRevealed()) RevealTile(e);
+            }
+
+            e = this.grid[x+1][y];
+            if(e.isEmpty()&& !e.isRevealed()) RevealTile(e);
+
+            if(y < this.height - 1){
+                e = this.grid[x+1][y+1];
+                if(e.isEmpty()&& !e.isRevealed()) RevealTile(e);
+            }
+        }
+
+        // Reveals adjacent empty tiles above and below tile
+        if(y > 0){
+            e = this.grid[x][y-1];
+            if(e.isEmpty()&& !e.isRevealed()) RevealTile(e);
+        }
+        if(y < this.height - 1){
+            e = this.grid[x][y+1];
+            if(e.isEmpty()&& !e.isRevealed()) RevealTile(e);
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Tile t = (Tile)e.getSource();
-        DecodeTile(t);
+        System.out.println("User clicked on tile: (" + t.getCoordinates().width + ", " + t.getCoordinates().height + ")");
+        if(t.isBomb()){
+            DecodeTile(t);
+        }
+        else {
+            RevealTile(t);
+        }
     }
 }

@@ -5,23 +5,16 @@ public class Tile extends JButton {
 
     private Dimension coordinates;
     private int value;
+    private boolean revealed;
 
-    public Tile(int column, int row){
+    public Tile(int x, int y){
         setPreferredSize(new Dimension(30, 30));
         setMinimumSize(new Dimension(25, 25));
         setMargin(new Insets(1, 1, 1, 1));
 
-        coordinates = new Dimension(column, row);
+        this.coordinates = new Dimension(x, y); // I have no idea why, but the coordinates were being flipped
         this.value = 0;
-    }
-
-    public Tile(int column, int row, int val){
-        setPreferredSize(new Dimension(30, 30));
-        setMinimumSize(new Dimension(25, 25));
-        setMargin(new Insets(1, 1, 1, 1));
-
-        coordinates = new Dimension(column, row);
-        value = val;
+        this.revealed = false;
     }
 
     public int getValue() {
@@ -38,5 +31,15 @@ public class Tile extends JButton {
         }
     }
 
-    public Dimension getCoordinates() { return coordinates; }
+    public boolean isEmpty(){ return this.value == 0; }
+
+    public boolean isBomb(){ return this.value == -1; }
+
+    public boolean isNumber(){ return this.value != 0 && this.value != -1; }
+
+    public boolean isRevealed(){ return this.revealed; }
+
+    public void revealTile(){ this.revealed = true; }
+
+    public Dimension getCoordinates() { return this.coordinates; }
 }
