@@ -1,7 +1,9 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class Game extends JPanel {
     public Game(){
@@ -14,13 +16,20 @@ public class Game extends JPanel {
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         topPanel.setAlignmentY(Component.TOP_ALIGNMENT);
         // Create reset button
-        JButton resetButton = new JButton( new AbstractAction("Reset"){
+        JButton resetButton = new JButton( new AbstractAction(""){
             @Override
             public void actionPerformed(ActionEvent e) {
                 board.resetBoard();
             }
         });
-        resetButton.setText("R");
+        Image smilely = null;
+        try {
+            smilely = ImageIO.read(getClass().getResource("./smile.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        resetButton.setIcon(new ImageIcon(smilely));
+        //resetButton.setSize(new Dimension(30, 30));
         resetButton.setPreferredSize(new Dimension(30, 30));
         resetButton.setMinimumSize(new Dimension(25, 25));
         resetButton.setMargin(new Insets(0, 0, 0, 0));
@@ -37,7 +46,7 @@ public class Game extends JPanel {
     public static void main(String[] args){
         JFrame frame = new JFrame("Minesweeper Reborn");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setPreferredSize(new Dimension(4*100, 4*100));
+        frame.setPreferredSize(new Dimension(9*30, 10*30));
         frame.setResizable(false);
 
         Game game = new Game();

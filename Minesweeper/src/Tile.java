@@ -8,8 +8,9 @@ public class Tile extends JButton {
     private boolean revealed;
 
     public Tile(int x, int y){
+        setSize(new Dimension(30, 30));
         setPreferredSize(new Dimension(30, 30));
-        setMinimumSize(new Dimension(25, 25));
+        setMaximumSize(new Dimension(30, 30));
         setMargin(new Insets(0, 0, 0, 0));
 
         this.coordinates = new Dimension(x, y); // I have no idea why, but the coordinates were being flipped
