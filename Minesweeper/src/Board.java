@@ -1,16 +1,21 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.IOException;
 
-public class Board extends JPanel implements ActionListener {
+public class Board extends JPanel implements ActionListener, MouseListener {
 
     private int height, width;
     private int minesCount;
     private Tile[][] grid;
 
     public Board(int x, int y, int mines){
-        GridLayout layout= new GridLayout(x, y, 1, 1);
+        GridLayout layout= new GridLayout(x,y);
+        layout.setVgap(0);
         setLayout(layout);
         this.width = x;
         this.height = y;
@@ -21,6 +26,7 @@ public class Board extends JPanel implements ActionListener {
             for(int j = 0; j < this.width; j++){
                 Tile t = new Tile(j, i);
                 t.addActionListener(this);
+                t.addMouseListener(this);
                 this.grid[j][i] = t;
                 add(this.grid[j][i]);
             }
@@ -108,6 +114,9 @@ public class Board extends JPanel implements ActionListener {
     }
 
     public void resetBoard(){
+        this.removeAll();
+        this.revalidate();
+        this.repaint();
         this.grid = new Tile[this.width][this.height];
         for(int i = 0; i < this.width; i++){
             for(int j = 0; j < this.height; j++){
@@ -119,7 +128,6 @@ public class Board extends JPanel implements ActionListener {
         }
         insertBombs();
     }
-
 
     /**
      * ActivateCheatMode - Used for testing, reveals values of all tiles
@@ -133,7 +141,6 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
-
     /**
      * DecodeTile - Interprets current tile and changes it's text to match its value
      * @param t - Minesweeper Tile to decode
@@ -144,7 +151,7 @@ public class Board extends JPanel implements ActionListener {
         switch (val){
             case 0:
                 // Empty/blank tile
-                t.setText(".");
+                t.setText("");
                 break;
             case -1:
                 // Bomb tile
@@ -156,6 +163,7 @@ public class Board extends JPanel implements ActionListener {
                 break;
         }
 
+        t.setEnabled(false);
         t.revealTile();
     }
 
@@ -230,8 +238,6 @@ public class Board extends JPanel implements ActionListener {
             if(y > 0){
                 e = this.grid[x-1][y-1];
                 if(e.isEmpty() && !e.isRevealed()){
-                    System.out.println("Empty adjacent tile at: ("+e.getCoordinates().width+", "+e.getCoordinates().height+")");
-                    System.out.println("Grid["+(x-1)+"]["+(y-1)+"]");
                     RevealTile(e);
                 }
             }
@@ -280,7 +286,42 @@ public class Board extends JPanel implements ActionListener {
             DecodeTile(t);
         }
         else {
+            t.setIcon(null);
             RevealTile(t);
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent me) { }
+
+    @Override
+    public void mouseReleased(MouseEvent me) { }
+
+    @Override
+    public void mouseEntered(MouseEvent me) { }
+
+    @Override
+    public void mouseExited(MouseEvent me) { }
+
+    @Override
+    public void mouseClicked(MouseEvent e){
+        Tile t = (Tile)e.getSource();
+
+        if(e.getButton() == MouseEvent.BUTTON3){
+            if(t.getIcon() == null){
+                Image flag = null;
+                try {
+                    flag = ImageIO.read(getClass().getResource("./flag.png"));
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                t.setIcon(new ImageIcon(flag));
+                System.out.println("User flagged tile: (" + t.getCoordinates().width + ", " + t.getCoordinates().height + ")");
+            }
+            else{
+                System.out.println("User unflagged tile: (" + t.getCoordinates().width + ", " + t.getCoordinates().height + ")");
+                t.setIcon(null);
+            }
         }
     }
 }

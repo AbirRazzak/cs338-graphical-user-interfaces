@@ -10,7 +10,7 @@ public class Tile extends JButton {
     public Tile(int x, int y){
         setPreferredSize(new Dimension(30, 30));
         setMinimumSize(new Dimension(25, 25));
-        setMargin(new Insets(1, 1, 1, 1));
+        setMargin(new Insets(0, 0, 0, 0));
 
         this.coordinates = new Dimension(x, y); // I have no idea why, but the coordinates were being flipped
         this.value = 0;
