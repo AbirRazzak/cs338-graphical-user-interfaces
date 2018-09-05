@@ -168,7 +168,7 @@ public class Board extends JPanel implements ActionListener, MouseListener {
                 t.setIcon(null); // clear any flags on top of the bomb
                 Image bomb = null;
                 try {
-                    bomb = ImageIO.read(getClass().getResource("./bomb.png"));
+                    bomb = ImageIO.read(getClass().getResource("/bomb.png"));
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
@@ -353,7 +353,7 @@ public class Board extends JPanel implements ActionListener, MouseListener {
             if(t.getIcon() == null){
                 Image flag = null;
                 try {
-                    flag = ImageIO.read(getClass().getResource("./flag.png"));
+                    flag = ImageIO.read(getClass().getResource("/flag.png"));
                 } catch (IOException e1) {
                     e1.printStackTrace();
                 }
