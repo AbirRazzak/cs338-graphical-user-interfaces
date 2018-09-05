@@ -13,6 +13,13 @@ public class Board extends JPanel implements ActionListener, MouseListener {
     private int minesCount;
     private Tile[][] grid;
 
+    /**
+     * Creates a grid of tiles which will be known as the "board"
+     * @param x - height of the board
+     * @param y - width of the board
+     * @param mines - number of mines to be placed in the board
+     * Use these parameters in the future to create multiple difficulties within the game
+     */
     public Board(int x, int y, int mines){
         GridLayout layout= new GridLayout(x,y);
         layout.setVgap(0);
@@ -113,6 +120,9 @@ public class Board extends JPanel implements ActionListener, MouseListener {
         }
     }
 
+    /**
+     * resetBoard - Resets the game board with new tiles
+     */
     public void resetBoard(){
         this.removeAll();
         this.revalidate();
@@ -155,7 +165,17 @@ public class Board extends JPanel implements ActionListener, MouseListener {
                 break;
             case -1:
                 // Bomb tile
-                t.setText("B");
+                t.setIcon(null); // clear any flags on top of the bomb
+                Image bomb = null;
+                try {
+                    bomb = ImageIO.read(getClass().getResource("./bomb.png"));
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                t.setIcon(new ImageIcon(bomb));
+//                System.out.println("User flagged tile: (" + t.getCoordinates().width + ", " + t.getCoordinates().height + ")");
+
+//                t.setText("B");
                 break;
             default:
                 // Number tile
@@ -278,12 +298,29 @@ public class Board extends JPanel implements ActionListener, MouseListener {
         }
     }
 
+    /**
+     * MakeAllUnclickable - Makes all tiles on the board unclickable. Used when the user has clicked on a mine and lost.
+     */
+    private void MakeAllUnclickable(){
+        for(int i = 0; i < this.width; i++){
+            for(int j = 0; j < this.height; j++){
+                Tile t = this.grid[i][j];
+                t.setEnabled(false);
+            }
+        }
+    }
+
+    /**
+     * actionPerformed - Handled a tile click on the board
+     * @param e - event occurring (clicking on a tile)
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         Tile t = (Tile)e.getSource();
         System.out.println("User clicked on tile: (" + t.getCoordinates().width + ", " + t.getCoordinates().height + ")");
         if(t.isBomb()){
             DecodeTile(t);
+            MakeAllUnclickable();
         }
         else {
             t.setIcon(null);
@@ -291,6 +328,7 @@ public class Board extends JPanel implements ActionListener, MouseListener {
         }
     }
 
+    // These are all required with the mouse listener
     @Override
     public void mousePressed(MouseEvent me) { }
 
@@ -303,6 +341,10 @@ public class Board extends JPanel implements ActionListener, MouseListener {
     @Override
     public void mouseExited(MouseEvent me) { }
 
+    /**
+     * mouseClicked - also a listener for when a tile is clicked, however this will only handle right clicks (BUTTON3)
+     * @param e - event occurring (right clicking on a tile)
+     */
     @Override
     public void mouseClicked(MouseEvent e){
         Tile t = (Tile)e.getSource();
